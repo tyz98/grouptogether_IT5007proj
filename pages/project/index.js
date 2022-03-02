@@ -1,5 +1,7 @@
 export default function ProjectList() {
   return (
-    <h1>Project List Page</h1>
+    <>
+      <h1>Project List Page</h1>
+    </>
   )
 }
