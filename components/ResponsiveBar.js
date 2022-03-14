@@ -12,9 +12,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link'
+import { signIn, signOut, useSession } from "next-auth/react"
+
 
 export default function ResponsiveBar(props) {
   const {pages, settings} = props
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -109,9 +113,27 @@ export default function ResponsiveBar(props) {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+          {!session && (
+             <MenuItem>
+              <Typography textAlign="center">
+                <a
+                  href={`/api/auth/signin`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signIn()
+                  }}
+                >
+                  Sign in
+                </a>
+              </Typography>
+            </MenuItem>
+          )}
+          {session && session.user && (
+            <>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" src={session.user.image || "/static/images/avatar/2.jpg"} />
+                <Typography sx={{ my: 2, color: 'white', display: 'block', marginLeft: "0.5rem" }}>{session.user.name || session.user.email}</Typography>
               </IconButton>
             </Tooltip>
             <Menu
@@ -137,7 +159,23 @@ export default function ResponsiveBar(props) {
                   </Typography>
                 </MenuItem>
               ))}
+              <MenuItem key="logout">
+                <Typography textAlign="center">
+                  <a
+                    href={`/api/auth/signout`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      signOut()
+
+                    }}
+                  >
+                    Sign out
+                  </a>
+                </Typography>
+              </MenuItem>
             </Menu>
+          </>
+          )}
           </Box>
         </Toolbar>
       </Container>

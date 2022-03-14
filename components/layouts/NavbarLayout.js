@@ -10,7 +10,7 @@ export default function NavbarLayout({ children }) {
       <Head>
         <title>Group Together</title>
       </Head>
-      <ResponsiveBar pages={pages} settings={settings} />
+      <ResponsiveBar pages={pages} settings={settings}/>
       <main className={styles.main}>
         <Container maxWidth="xl">{children}</Container>
       </main>
