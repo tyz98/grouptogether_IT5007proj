@@ -1,6 +1,4 @@
-import axios from "axios"
-
-axios.defaults.baseURL = process.env.REACT_APP_API_URL
+import instance from "../utils/customAxios"
 
 /**
  * Create project using given data
@@ -8,5 +6,5 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL
  * @param {object} project e.g. {}
  */
  export const createProject = (project) => {
-  return axios.post(`/api/project`, {project})
+  return instance.post(`/api/project`, {project})
 };

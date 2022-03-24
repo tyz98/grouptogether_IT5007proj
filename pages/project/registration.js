@@ -68,9 +68,8 @@ export default function ProjectRegistration() {
             resetForm()
           }).catch(err => {
             setSubmitting(false)
-            //TODO
-            if (err && err.response  && err.response.data && err.response.data.message) {
-              alert(err.response.data.message)
+            if (err && err.message) {
+              alert(err.message)
             } else {
               alert("Creation failed.")
             }

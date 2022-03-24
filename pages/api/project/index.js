@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     if (Math.random() >= 0.5) {//mock success
       res.json({//TODO: return the project obj
         success: true,
-        project: {_id: 1, ...req.body.project},
+        message: { project: {_id: 1, ...req.body.project} },
       })
     } else {//mock fail
       res.status(400).json({//TODO: if err, return the error reason
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     }
   } else {
     res.status(401).json({
+      success: false,
       message: "You must be signed in.",
     })
   }
