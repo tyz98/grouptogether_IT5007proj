@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   console.log("pid=", session)
   if (session) {
     res.send({//TODO: mock data
-      profile: {projectName: 'it5007'},
+      profile: {projectName: 'IT5007'},
     })
   } else {
     res.send({
