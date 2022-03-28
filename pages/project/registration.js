@@ -62,11 +62,11 @@ export default function ProjectRegistration() {
           return errors;
         }}
         onSubmit={(values, {setSubmitting, resetForm}) => {
-          createProject(values).then(_ => {
+          createProject(values).then( res => { // 没有错误的响应：res是响应体中的数据
             setSubmitting(false)
             alert("Successfully created!")
             resetForm()
-          }).catch(err => {
+          }).catch(err => { // 有错误的响应：err一个字典 {success: false, message: 错误原因}
             setSubmitting(false)
             if (err && err.message) {
               alert(err.message)
