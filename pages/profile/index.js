@@ -52,9 +52,9 @@ export default function ProfileBasic() {
   // TODO: display profile
   return (
     <>
-      <p>
+      <h1>
         Basic Profile - {profile.name ? profile.name : ''}
-      </p>
+      </h1>
       <Container maxWidth="sm" styles={{marginTop: "30px"}}>
         <Formik
           initialValues={{
