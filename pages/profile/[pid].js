@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react"
 import { getSession, useSession } from "next-auth/react"
 import AccessDenied from "../../components/AccessDenied"
+import Box from '@mui/material/Box';
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
 
 export default function ProfileProject(props) {
-  const { data: session, status } = useSession()
-  const loading = status === "loading"
-  const [profile, setProfile] = useState({})
+  const { data: session, status } = useSession();
+  const loading = status === "loading";
+  const [profile, setProfile] = useState({});
 
   // Fetch profile from protected route
   useEffect(() => {
