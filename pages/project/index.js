@@ -17,14 +17,14 @@ export default function ProjectList({ projects }) {
 }
 
 export async function getServerSideProps(context) {
-  const responsedata = await projectsGetResponse(context.req)
+  const responsedata = await projectsGetResponse()
   if (responsedata && responsedata.success) {
     return {
       props: {
         projects: responsedata.message
       }, // will be passed to the page component as props
     }
-  } else {
+  } else {//TODO: error page
     return {
       notFound: true,
     }

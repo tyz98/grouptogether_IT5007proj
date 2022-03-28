@@ -1,5 +1,5 @@
 import { getSession } from "next-auth/react"
-import  {projectsGetResponse } from "../../../utils/ssrUtils"
+import { projectsGetResponse } from "../../../utils/ssrUtils"
 
 //TODO
 export default async function handler(req, res) {
@@ -15,16 +15,16 @@ export default async function handler(req, res) {
   }
 }
 
-async function getHandler(req, res) {
-  const responsedata = await projectsGetResponse(req)
+async function getHandler(req, res) {//get /project
+  const responsedata = await projectsGetResponse()
   if (responsedata.success) {
     res.json(responsedata)
   } else {
-    res.status(400).json(responsedata)
+    res.status(responsedata.status).json(responsedata)
   }
 }
 
-async function postHandler(req, res) {
+async function postHandler(req, res) {//post /project
   const session = await getSession({ req })
   //TODO: create a project databse
   if (session) {
