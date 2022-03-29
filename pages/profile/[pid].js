@@ -8,35 +8,32 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import { Button, LinearProgress, Container } from '@mui/material';
 
 export default function ProfileProject(props) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
-  const [profile, setProfile] = useState([
-    {desc:"frontend", options:["vue", "react"]}, 
-    {desc:"backend", options:["java", "python"]}
-  ]);
-  const [frontend_state, setStateFrontend] = useState({
-    reactt: false, 
-    vuejs: false, 
-    angular: false, 
-    svelte:false
-  });
+  const [profile, setProfile] = useState({})
 
-  const [backend_state, setStateBackend] = useState({
-    python: false,
-    java: false,
-    golang: false,
-    nodejs: false,
-  });
+  const skills = [
+    {desc:"frontend", options:["vue", "react", "angular", "svelte"]},
+    {desc:"backend", options:["java", "python", "golang", "nodejs"]},
+    {desc:"design experience", options:["familiar", "know", "never"]}
+  ];
 
-  const [design_state, setStateDesign] = useState({
-    familiar: false,
-    know: false,
-    never: false,
-  });
+  const [skills_state, setStateSkills] = useState({});
 
+  // define a funtion and call it immediately to initialize checkbox object state
+  // equal to const [skills_state, setStateSkills] = useState({ vue: false, react: false, ...})
+  (function initSkills() {
+    for (let skill in skills) {
+      for (let option in skill.options){
+        setStateSkills({option: false})
+      }
+    }
+  })();
 
   // Fetch profile from protected route
   useEffect(() => {
@@ -53,8 +50,6 @@ export default function ProfileProject(props) {
     fetchData()
   }, [session, props.pid])
 
-
-  // When rendering client side don't display anything until loading is complete
   if (typeof window !== "undefined" && loading) return null
 
   // If no session exists, display access denied message
@@ -64,146 +59,61 @@ export default function ProfileProject(props) {
     )
   }
 
-  const handleChangeFrontend = (event) => {
-    setStateFrontend({
-      ...frontend_state,
+  const handleChange = (event) => {
+    setStateSkills({
+      ...skills_state,
       [event.target.name]: event.target.checked,
     });
   };
 
-  const handleChangeBackend = (event) => {
-    setStateBackend({
-      ...backend_state,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
-  const handleChangeDesign = (event) => {
-    setStateDesign({
-      ...design_state,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
-  const { reactt, vuejs, angular, svelte } = frontend_state;
-  const frontend_error = [reactt, vuejs, angular, svelte].filter((v) => v).length < 1;
-
-  const { python, java, golang, nodejs } = backend_state;
-  const backend_error = [python, java, golang, nodejs].filter((v) => v).length < 1;
-
-  const { familiar, know, never } = design_state;
-  const design_error = [familiar, know, never].filter((v) => v).length !== 1;
-
-  // If session exists, display profile
-  //TODO: display profile
   return (
     <>
-      <h1>Project {props.pid} - Specific Profile Form Page</h1>
-      <p>{profile.projectName ? profile.projectName : ""}</p>
-      <Container maxWidth="md" component="main">
-        <Box sx={{ display: 'flex' }}>
-          <FormControl
-            required
-            error={frontend_error}
-            component="fieldset"
-            sx={{ m: 3 }}
-            variant="standard"
+      <Typography variant="h4" align="center">
+          Project {profile.projectName ? profile.projectName : ""} (ID: {props.pid}) - Specific Profile Form Page
+      </Typography>
+      <Container maxWidth="sm">
+        <Container maxWidth="md" component="main">
+          <Grid container spacing={5} alignItems="flex-end">
+            {skills.map((skill) => (
+              <Grid item key={skill.desc} xs={12} md={4}>
+              <FormLabel component="legend">{skill.desc}</FormLabel>
+              <FormGroup>
+                {skill.options.map((option)=> (
+                  <FormControlLabel
+                  control={
+                    <Checkbox checked={skills_state.option} onChange={handleChange} name={option} />
+                  }
+                  label={option}
+                  key={option}
+                  />
+                ))}
+              </FormGroup>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+        <Box 
+          sx={{
+            display: "flex",
+            justifyContent: "space-evenly"
+          }}
+          margin={1}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              const choose_skills = [];
+              for (let s in skills_state) {
+                choose_skills.push(skills_state[s]);
+              }
+              if ( choose_skills.filter((v) => v).length < 1) {
+                alert('Successfully submit! But it may affect matching result because you you did not choose one.');
+              } else {
+                alert('Successfully submit!');}
+            }}
           >
-            <FormLabel component="legend">Frontend Framework</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={reactt} onChange={handleChangeFrontend} name="reactt" />
-                }
-                label="React"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={vuejs} onChange={handleChangeFrontend} name="vuejs" />
-                }
-                label="Vue.js"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={angular} onChange={handleChangeFrontend} name="angular" />
-                }
-                label="Angular"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={svelte} onChange={handleChangeFrontend} name="svelte" />
-                }
-                label="Svelte"
-              />
-            </FormGroup>
-            <FormHelperText>Select at least one skill</FormHelperText>
-          </FormControl>
-          <FormControl
-            required
-            error={backend_error}
-            component="fieldset"
-            sx={{ m: 3 }}
-            variant="standard"
-          >
-            <FormLabel component="legend">Backend Language</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={python} onChange={handleChangeBackend} name="python" />
-                }
-                label="Python"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={java} onChange={handleChangeBackend} name="java" />
-                }
-                label="Java"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={golang} onChange={handleChangeBackend} name="golang" />
-                }
-                label="Golang"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={nodejs} onChange={handleChangeBackend} name="nodejs" />
-                }
-                label="Node.js"
-              />
-            </FormGroup>
-            <FormHelperText>Select at least one skill</FormHelperText>
-          </FormControl>
-          <FormControl
-            required
-            error={design_error}
-            component="fieldset"
-            sx={{ m: 3 }}
-            variant="standard"
-          >
-            <FormLabel component="legend">Design Experience</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox checked={familiar} onChange={handleChangeDesign} name="familiar" />
-                }
-                label="Familiar"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={know} onChange={handleChangeDesign} name="know" />
-                }
-                label="Know"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={never} onChange={handleChangeDesign} name="never" />
-                }
-                label="Never"
-              />
-            </FormGroup>
-            <FormHelperText>Choose only one</FormHelperText>
-          </FormControl>
+            Submit
+          </Button>
         </Box>
       </Container>
     </>
@@ -218,7 +128,7 @@ export async function getServerSideProps(context) {
     }
   }
   const pid = context.params.pid
-  
+
   return {
     props: {
       pid,
