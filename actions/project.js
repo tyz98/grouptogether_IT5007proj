@@ -29,19 +29,3 @@ const projectApiPrefix = '/api/project'
 export const getProjectQuestions = (projectId) => {
   return instance.get(`${projectApiPrefix}/${projectId}/question`)
 }
-
-/**
- * Post session.user.email's all answers to the questions of project answer.pid
- *
- * @param {object} project e.g. 
- * {
- *  pid: "1",
- *  222: [0, 3],
- *  333: [1],
- *  444: [4, 7],
- * }
- * 
- */
-export const postProjectQuestionAnswers = (answer) => {
-  return instance.post(`${projectApiPrefix}/${answer.pid}/question`, answer)
-}

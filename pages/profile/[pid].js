@@ -4,7 +4,8 @@ import { useRouter } from 'next/router'
 import AccessDenied from "../../components/AccessDenied"
 import { Card, CardContent, Button, Typography, Grid, LinearProgress, FormGroup, FormControlLabel, Box, Checkbox } from '@mui/material';
 import ReloadPrompt from "../../components/ReloadPrompt"
-import { getProjectQuestions, postProjectQuestionAnswers } from "../../actions/project"
+import { getProjectQuestions } from "../../actions/project"
+import { postProjectProfile } from "../../actions/profile"
 
 
 export default function ProfileProject(props) {
@@ -77,8 +78,8 @@ export default function ProfileProject(props) {
       }
     }
     console.log("postData=", {pid, answer})
-    postProjectQuestionAnswers({pid, answer}).then(res => {
-      console.log("postProjectQuestionAnswers res=", res)
+    postProjectProfile({pid, answer}).then(res => {
+      console.log("postProjectProfile res=", res)
       setSubmitting(false)
       alert("Successfully submitted!")
     }).catch(err => {

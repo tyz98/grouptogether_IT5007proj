@@ -48,27 +48,3 @@ async function getHandler(req, res) {//get /project/[pid]/question
     )
   }
 }
-
-//Post session.user.email's all answers to the questions of project answer.pid
-async function postHandler(req, res) {//post /project/[pid]/question
-  const session = await getSession({ req })
-  if (!session) {
-    res.status(401).json({
-      success: false,
-      message: errMessages.MUST_SIGN_IN,
-    })
-  }
-
-  //TODO: create an answer object in db
-  if (Math.random() >= 0.1) {//mock success
-    res.json({//TODO: return the answer obj
-      success: true,
-      message: { answer: {_id: 1, userEmail: session.user.email, ...req.body} },
-    })
-  } else {//mock fail
-    res.status(400).json({//TODO: if err, return the error reason
-      success: false,
-      message: "this is an error reason",
-    })
-  }
-}
