@@ -1,5 +1,5 @@
 export async function projectsGetResponse() {
-  if (Math.random() >= 0.1) {//mock success
+  if (Math.random() >= -1) {//mock success
     return {//TODO: return the projects array
       success: true,
       message: [
@@ -23,7 +23,7 @@ export async function projectsGetResponse() {
 }
 
 export async function singleProjectGetResponse(pid) {
-  if (Math.random() >= 0.5) {//mock success
+  if (Math.random() >= -1) {//mock success
     return {//TODO: return the project detail obj
       success: true,
       message: {
@@ -103,7 +103,7 @@ export async function singleProjectGetResponse(pid) {
         ]
       },
     }
-  } else if (Math.random() >= 0.5) {//mock 404 fail
+  } else if (Math.random() >= -1) {//mock 404 fail
     return {//TODO: if err, return the error reason
       success: false,
       status: 404,

@@ -15,7 +15,7 @@ export default async function handler(req, res) {//only support get.
 //get user uid's of project pid - specific profile (TODO: not sure if add basicProfile)
 async function getHandler(req, res) {//get /profile/[pid]/[uid]
   const { pid, uid } = req.query
-  if (Math.random() > 0.1) {
+  if (Math.random() > -1) {
     res.json({
       success: true,
       message: {

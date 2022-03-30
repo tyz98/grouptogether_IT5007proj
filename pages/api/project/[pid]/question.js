@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 //get all questions of project req.params.pid
 async function getHandler(req, res) {//get /project/[pid]/question
   const { pid } = req.query
-  if (Math.random() > 0.1) {
+  if (Math.random() > -1) {
     res.json({
       success: true,
       message: {

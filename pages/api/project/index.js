@@ -28,7 +28,7 @@ async function postHandler(req, res) {//post /project
   const session = await getSession({ req })
   //TODO: create a project databse
   if (session) {
-    if (Math.random() >= 0.5) {//mock success
+    if (Math.random() >= -1) {//mock success
       res.json({//TODO: return the project obj
         success: true,
         message: { project: {_id: 1, ...req.body.project} },

@@ -23,7 +23,7 @@ async function postHandler(req, res) {//post /project/[pid]
   }
 
   //TODO: create an answer object in db
-  if (Math.random() >= 0.1) {//mock success
+  if (Math.random() >= -1) {//mock success
     res.json({//TODO: return the profile obj
       success: true,
       message: { profile: {_id: 1, userEmail: session.user.email, ...req.body} },

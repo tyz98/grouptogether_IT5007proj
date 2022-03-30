@@ -25,7 +25,7 @@ async function getHandler(req, res) {//get /profile params: id or email
   }
   const email = req.query.email
   //TODO get basic profile where email = req.query.email
-  if (Math.random() >= 0.5) {//success, this user have created his/her basic profile
+  if (Math.random() >= 2) {//success, this user have created his/her basic profile
     res.json({
       success: true,
       message: {
@@ -37,7 +37,7 @@ async function getHandler(req, res) {//get /profile params: id or email
         school: "National University of Singapore",
       }
     })
-  } else if (Math.random() >= 0.1) {//this user haven't created his/her basic profile yet, but still response with 200
+  } else if (Math.random() >= -1) {//this user haven't created his/her basic profile yet, but still response with 200
     res.json({
       success: false,
       message: errMessages.NOTEXIST
@@ -60,7 +60,7 @@ async function postHandler(req, res) {//post /profile
   }
 
   //TODO: create a basic profile
-  if (Math.random() >= 0.5) {//mock success
+  if (Math.random() >= -1) {//mock success
     res.json({//TODO: return the project obj
       success: true,
       message: { profile: {_id: 1, ...req.body.profile} },
