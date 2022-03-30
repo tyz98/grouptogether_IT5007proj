@@ -8,14 +8,11 @@ export default function AnswerList({questions, questionsChecked, handleChange=()
         <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={question._id}>
           <Card sx={{ height: 300, overflow: "auto" }}>
               <CardContent>
-                <Typography variant="h6" component="div" gutterBottom sx={{ whiteSpace: "nowrap", }}>
+                <Typography variant="h6" component="div" gutterBottom>
                   {question.desc}
                 </Typography>
                 <FormGroup>
                 {question.options.map((option, oIdx)=> {
-                  console.log("questionsChecked=", questionsChecked)
-                  console.log("questionsChecked[question._id]=", questionsChecked[question._id])
-                  console.log("oIdx=", oIdx)
                   return (
                   <FormControlLabel 
                     checked={questionsChecked[question._id] && questionsChecked[question._id][oIdx]}
