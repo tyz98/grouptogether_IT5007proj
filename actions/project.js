@@ -1,5 +1,6 @@
 import instance from "../utils/customAxios"
 
+const projectApiPrefix = '/api/project'
 /**
  * Create project using given data
  *
@@ -16,5 +17,31 @@ import instance from "../utils/customAxios"
  * }
  */
  export const createProject = (project) => {
-  return instance.post(`/api/project`, {project})
+  return instance.post(`${projectApiPrefix}`, {project})
 };
+
+/**
+ * Get project projectId's questions 
+ *
+ * @param {object} projectId e.g. 10
+ * 
+ */
+export const getProjectQuestions = (projectId) => {
+  return instance.get(`${projectApiPrefix}/${projectId}/question`)
+}
+
+/**
+ * Post session.user.email's all answers to the questions of project answer.pid
+ *
+ * @param {object} project e.g. 
+ * {
+ *  pid: "1",
+ *  222: [0, 3],
+ *  333: [1],
+ *  444: [4, 7],
+ * }
+ * 
+ */
+export const postProjectQuestionAnswers = (answer) => {
+  return instance.post(`${projectApiPrefix}/${answer.pid}/question`, answer)
+}

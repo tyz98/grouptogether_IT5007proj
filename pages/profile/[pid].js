@@ -1,54 +1,44 @@
 import { useState, useEffect } from "react"
-import { getSession, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from 'next/router'
 import AccessDenied from "../../components/AccessDenied"
-import Box from '@mui/material/Box';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { Button, LinearProgress, Container } from '@mui/material';
+import { Card, CardContent, Button, Typography, Grid, LinearProgress, FormGroup, FormControlLabel, Box, Checkbox } from '@mui/material';
+import ReloadPrompt from "../../components/ReloadPrompt"
+import { getProjectQuestions, postProjectQuestionAnswers } from "../../actions/project"
+
 
 export default function ProfileProject(props) {
+  const router = useRouter()
+  const { pid } = router.query
+
   const { data: session, status } = useSession();
   const loading = status === "loading";
-  const [profile, setProfile] = useState({})
-
-  const skills = [
-    {desc:"frontend", options:["vue", "react", "angular", "svelte"]},
-    {desc:"backend", options:["java", "python", "golang", "nodejs"]},
-    {desc:"design experience", options:["familiar", "know", "never"]}
-  ];
-
-  const [skills_state, setStateSkills] = useState({});
-
-  // define a funtion and call it immediately to initialize checkbox object state
-  // equal to const [skills_state, setStateSkills] = useState({ vue: false, react: false, ...})
-  (function initSkills() {
-    for (let skill in skills) {
-      for (let option in skill.options){
-        setStateSkills({option: false})
-      }
-    }
-  })();
+  const [questions, setQuestions] = useState([])
+  const [questionsChecked, setQuestionsChecked] = useState({}) //{1: [false, true, true], 2: [false, false, true]} {qid: [options]}
+  const [pageError, setPageError] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   // Fetch profile from protected route
   useEffect(() => {
     if (!session) {
       return;
     }
-    const fetchData = async () => {
-      const res = await fetch(`/api/profile/${props.pid}`)
-      const json = await res.json()
-      if (json.profile) {
-        setProfile(json.profile)
+
+    getProjectQuestions(pid).then(res => { // res is exactly the data in response body
+      console.log("getProjectQuestions res=", res)
+      setQuestions(res.questions)
+      setPageError(false)
+    }).catch(err => { // err is {success: false, message: "error reason"}
+      if (err && err.message) {
+        alert(err.message)
+        setPageError(true)
+      } else {
+        setPageError(true)
       }
-    }
-    fetchData()
-  }, [session, props.pid])
+    })
+  }, [session, pid])
+
+
 
   if (typeof window !== "undefined" && loading) return null
 
@@ -59,39 +49,77 @@ export default function ProfileProject(props) {
     )
   }
 
-  const handleChange = (event) => {
-    setStateSkills({
-      ...skills_state,
-      [event.target.name]: event.target.checked,
-    });
+  if (pageError) {
+    return (
+      <ReloadPrompt />
+    )
+  }
+
+  const handleChange = (e, qid, qIdx, oIdx) => {
+    const newQuestionsChecked = {...questionsChecked}
+    if (!questionsChecked[qid]) {
+      newQuestionsChecked[qid] = new Array(questions[qIdx].options.length).fill(false)
+      newQuestionsChecked[qid][oIdx] = e.target.checked
+    } else {
+      newQuestionsChecked[qid][oIdx] = e.target.checked
+    }
+    newQuestionsChecked[qid][oIdx] = e.target.checked
+    setQuestionsChecked(newQuestionsChecked)
   };
+
+  const submitForm = () => {
+    setSubmitting(true)
+    const answer = {}
+    for (let qid in questionsChecked) {
+      const chosedIdx = questionsChecked[qid].map((v, i) => [v, i]).filter(x => x[0]).map(x => x[1])
+      if (chosedIdx.length >= 1) {
+        answer[qid] = chosedIdx
+      }
+    }
+    console.log("postData=", {pid, answer})
+    postProjectQuestionAnswers({pid, answer}).then(res => {
+      console.log("postProjectQuestionAnswers res=", res)
+      setSubmitting(false)
+      alert("Successfully submitted!")
+    }).catch(err => {
+      setSubmitting(false)
+      if (err && err.message) {
+        alert(err.message)
+      } else {
+        alert("Submission failed.")
+      }
+    })
+  }
 
   return (
     <>
-      <Typography variant="h4" align="center">
-          Project {profile.projectName ? profile.projectName : ""} (ID: {props.pid}) - Specific Profile Form Page
-      </Typography>
-      <Container maxWidth="sm">
-        <Container maxWidth="md" component="main">
-          <Grid container spacing={5} alignItems="flex-end">
-            {skills.map((skill) => (
-              <Grid item key={skill.desc} xs={12} md={4}>
-              <FormLabel component="legend">{skill.desc}</FormLabel>
-              <FormGroup>
-                {skill.options.map((option)=> (
-                  <FormControlLabel
-                  control={
-                    <Checkbox checked={skills_state.option} onChange={handleChange} name={option} />
-                  }
-                  label={option}
-                  key={option}
-                  />
-                ))}
-              </FormGroup>
-              </Grid>
-            ))}
+    <Grid container spacing={3}>
+      {
+        questions.map((question, qIdx) => (
+          <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={question._id}>
+            <Card sx={{ height: 300, overflow: "auto" }}>
+                <CardContent>
+                  <Typography variant="h6" component="div" gutterBottom sx={{ whiteSpace: "nowrap", }}>
+                    {question.desc}
+                  </Typography>
+                  <FormGroup>
+                  {question.options.map((option, oIdx)=> (
+                    <FormControlLabel 
+                      checked={questionsChecked[question._id] && questionsChecked[question._id][oIdx]} 
+                      onChange={(e) => { handleChange(e, question._id, qIdx, oIdx) }} 
+                      key={oIdx} 
+                      name={oIdx}
+                      label={option}
+                      control={<Checkbox  />} 
+                    />))}
+                  </FormGroup>
+                </CardContent>
+            </Card>
           </Grid>
-        </Container>
+        ))
+      }
+    </Grid>
+    {submitting && <LinearProgress />}
         <Box 
           sx={{
             display: "flex",
@@ -101,37 +129,43 @@ export default function ProfileProject(props) {
           <Button
             variant="contained"
             color="primary"
+            disabled={submitting}
             onClick={() => {
-              const choose_skills = [];
-              for (let s in skills_state) {
-                choose_skills.push(skills_state[s]);
+              let hasUnansweredQuestion = false
+              for (let q of questions) {
+                if (!questionsChecked[q._id] || questionsChecked[q._id].filter(v => v).length < 1) {
+                  hasUnansweredQuestion = true
+                  break
+                }
               }
-              if ( choose_skills.filter((v) => v).length < 1) {
-                alert('Successfully submit! But it may affect matching result because you you did not choose one.');
-              } else {
-                alert('Successfully submit!');}
+              let sureToSubmit = true
+              if (hasUnansweredQuestion) {
+                sureToSubmit = confirm('You have unanswered questions. Answering all questions can help you to be found by other teammates. Are you sure to submit?');
+              }
+              if (sureToSubmit) {
+                submitForm()
+              }
             }}
           >
             Submit
           </Button>
         </Box>
-      </Container>
     </>
   )
 }
 
-export async function getServerSideProps(context) {
-  const session= await getSession(context)
-  if (!session) {
-    return {
-      props: {}
-    }
-  }
-  const pid = context.params.pid
+// export async function getServerSideProps(context) {
+//   const session= await getSession(context)
+//   if (!session) {
+//     return {
+//       props: {}
+//     }
+//   }
+//   const pid = context.params.pid
 
-  return {
-    props: {
-      pid,
-    }, // will be passed to the page component as props
-  }
-}
+//   return {
+//     props: {
+//       pid,
+//     }, // will be passed to the page component as props
+//   }
+// }
