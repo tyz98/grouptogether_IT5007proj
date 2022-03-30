@@ -7,7 +7,7 @@ export default function ProjectList({ projects }) {
     <Grid container spacing={3}>
       {
         projects.map(project => (
-          <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={project._id}>
+          <Grid item xs={12} sm={12} md={6} lg={4} xl={3} key={project._id}>
             <ProjectCard _id={project._id} school={project.school} code={project.code} semester={project.semester} projectName={project.projectName} studentCount={project.studentCount}/>
           </Grid>
         ))
