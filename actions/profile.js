@@ -34,3 +34,14 @@ const profileApiPrefix = '/api/profile'
 export const postProjectProfile = (profile) => {
   return instance.post(`${profileApiPrefix}/${profile.pid}`, profile)
 }
+
+/**
+ * Get user uid's project pid-specific profile(answers)
+ *
+ * @param {int} pid e.g. 1
+ * @param {int} uid e.g. 1
+ * 
+ */
+export const getProjectProfile = (pid, uid) => {
+  return instance.get(`${profileApiPrefix}/${pid}/${uid}`)
+}

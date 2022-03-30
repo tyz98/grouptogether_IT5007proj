@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router'
+import AnswerList from "../../components/AnswerList"
 import AccessDenied from "../../components/AccessDenied"
 import { Card, CardContent, Button, Typography, Grid, LinearProgress, FormGroup, FormControlLabel, Box, Checkbox } from '@mui/material';
 import ReloadPrompt from "../../components/ReloadPrompt"
@@ -19,7 +20,6 @@ export default function ProfileProject(props) {
   const [pageError, setPageError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  // Fetch profile from protected route
   useEffect(() => {
     if (!session) {
       return;
@@ -94,32 +94,7 @@ export default function ProfileProject(props) {
 
   return (
     <>
-    <Grid container spacing={3}>
-      {
-        questions.map((question, qIdx) => (
-          <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={question._id}>
-            <Card sx={{ height: 300, overflow: "auto" }}>
-                <CardContent>
-                  <Typography variant="h6" component="div" gutterBottom sx={{ whiteSpace: "nowrap", }}>
-                    {question.desc}
-                  </Typography>
-                  <FormGroup>
-                  {question.options.map((option, oIdx)=> (
-                    <FormControlLabel 
-                      checked={questionsChecked[question._id] && questionsChecked[question._id][oIdx]} 
-                      onChange={(e) => { handleChange(e, question._id, qIdx, oIdx) }} 
-                      key={oIdx} 
-                      name={oIdx}
-                      label={option}
-                      control={<Checkbox  />} 
-                    />))}
-                  </FormGroup>
-                </CardContent>
-            </Card>
-          </Grid>
-        ))
-      }
-    </Grid>
+    <AnswerList questions={questions} questionsChecked={questionsChecked} handleChange={handleChange}/>
     {submitting && <LinearProgress />}
         <Box 
           sx={{
