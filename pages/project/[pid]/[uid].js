@@ -5,6 +5,7 @@ import AccessDenied from "../../../components/AccessDenied"
 import ReloadPrompt from "../../../components/ReloadPrompt"
 import { getProjectProfile } from "../../../actions/profile"
 import { Card, CardContent, Typography, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import TeammateCard from "../../../components/TeammateCard"
 
 
 export default function ProjectProfileShow(props) {
@@ -13,6 +14,7 @@ export default function ProjectProfileShow(props) {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const [questions, setQuestions] = useState([])
+  const [basicProfile, setBasicProfile] = useState({})
   const [pageError, setPageError] = useState(false)
 
   useEffect(() => {
@@ -22,6 +24,7 @@ export default function ProjectProfileShow(props) {
 
     getProjectProfile(pid, uid).then(res => { // res is exactly the data in response body
       console.log("getProjectProfile res=", res)
+      setBasicProfile(res.basicProfile)
       setQuestions(res.projectProfile)
       setPageError(false)
     }).catch(err => { // err is {success: false, message: "error reason"}
@@ -49,6 +52,10 @@ export default function ProjectProfileShow(props) {
   }
 
   return (
+    <>
+    <Grid item xs={12} sm={12} md={6} lg={6} xl={4} sx={{marginBottom: 3}}>
+      <TeammateCard forShow={true} pid={pid} uid={uid} school={basicProfile.school} name={basicProfile.name} gender={basicProfile.gender} nationality={basicProfile.nationality} email={basicProfile.email} phone={basicProfile.phone}/>
+    </Grid>
     <Grid container spacing={3}>
       {
         questions.map((question) => (
@@ -86,5 +93,6 @@ export default function ProjectProfileShow(props) {
           </Grid>
         ))
       }
-    </Grid>)
+    </Grid>
+    </>)
 }

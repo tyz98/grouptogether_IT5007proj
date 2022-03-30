@@ -1,7 +1,7 @@
 import { Card, CardActions, CardContent, Button, Typography, Grid } from '@mui/material';
 import Link from 'next/link'
 
-export default function TeammateCard({pid, uid, school, name, gender, nationality, email, phone}) {
+export default function TeammateCard({pid, uid, school, name, gender, nationality, email, phone, forShow=false}) {
   return (
     <Card sx={{ height: 200 }}>
       <CardContent>
@@ -21,11 +21,12 @@ export default function TeammateCard({pid, uid, school, name, gender, nationalit
           {phone}
         </Typography>
       </CardContent>
+      {!forShow && 
       <CardActions>
         <Button size="small">
           <Link href={`/project/${pid}/${uid}`}>See Profile Details</Link>
         </Button>
-      </CardActions>
+      </CardActions>}
     </Card>
   );
 }

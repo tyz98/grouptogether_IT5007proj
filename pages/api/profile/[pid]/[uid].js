@@ -21,6 +21,14 @@ async function getHandler(req, res) {//get /profile/[pid]/[uid]
       message: {
         pid: pid, //project id
         uid: uid, //user id
+        basicProfile: {
+          school: "National University of Singapore",
+          name: "Zhang Tianyi",
+          gender: "F",
+          nationality: "Chinese",
+          email: "tianyi.zhang@u.nus.edu",
+          phone: "87654321"
+        },
         projectProfile: [
           { _id: 111, desc:"frontend", options:["vue", "react", "angular", "svelte"], chosenIdx: [0, 1, 3] },
           { _id: 222, desc:"backend", options:["java", "python", "golang", "nodejs"], chosenIdx: [] },
