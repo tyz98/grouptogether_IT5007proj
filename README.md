@@ -17,11 +17,11 @@ github link: https://github.com/tyz98/grouptogether_IT5007proj.git
         DEV_API_URL=http://localhost:3000
         ```
 
-or use the following command and add related details of the Google provider.
+      or use the following command first and then change GOOGLE_ID and GOOGLE_SECRET in **.env.local** to yours.
 
-   ```
-   cp .env.local.example .env.local
-   ```
+      ```
+      cp .env.local.example .env.local
+      ```
    
 ### STEP2: Change node version to **14.15.0** which is needed by next/auth
    ```
