@@ -1,6 +1,7 @@
-# GroupTogether
+# GroupTogether - IT5007 Final Project
+github link: https://github.com/tyz98/grouptogether_IT5007proj.git
 
-## Steps to run in development mode
+## Run in development mode
 
 ### STEP1: Specify your google api 
    
