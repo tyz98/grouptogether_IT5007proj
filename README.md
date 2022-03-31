@@ -38,7 +38,3 @@ or use the following command and add related details of the Google provider.
    ```
    npm run dev
    ```
-
-## Acknowledgements
-
-We would like to thank Prasanna Karthik Vairam for helpful discussions, support, comments, and feedback on earlier versions of this work.
