@@ -6,7 +6,7 @@ const profileApiPrefix = '/api/profile'
  *
  * @param {object} project e.g. {}
  */
- export const createBasicProfile = (profile) => {
+ export const createOrUpdateBasicProfile = (profile) => {
   return instance.post(profileApiPrefix, {profile})
 };
 

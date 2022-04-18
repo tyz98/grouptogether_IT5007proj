@@ -7,12 +7,13 @@ import { makeStyles } from "@mui/styles"
 import AccessDenied from "../../components/AccessDenied"
 import ReloadPrompt from "../../components/ReloadPrompt"
 import { defaultSchool, countries, errMessages } from '../../constants'
-import { getBasicProfile, createBasicProfile} from '../../actions/profile'
+import { getBasicProfile, createOrUpdateBasicProfile} from '../../actions/profile'
 
 export default function ProfileBasic() {
   const { data: session, status } = useSession()
   const loading = status === "loading"
   const [pageError, setPageError] = useState(false)
+  const [uid, setUid] = useState()
   const formikRef = useRef()
   const useStyles = makeStyles(() => ({
     full: {
@@ -30,7 +31,12 @@ export default function ProfileBasic() {
       console.log("res=", res)
       console.log("formikRef", formikRef)
       for (let field in res) {
-        formikRef.current.setFieldValue(field, res[field])
+        if (field === "_id") {
+          setUid(res[field])
+          console.log(res[field])
+        } else {
+          formikRef.current.setFieldValue(field, res[field])
+        }
       }
     }).catch(err => { // err is {success: false, message: "error reason"}
       if (err && err.message == errMessages.NOTEXIST) {
@@ -108,16 +114,27 @@ export default function ProfileBasic() {
             return errors;
           }}
           onSubmit={(values, {setSubmitting, resetForm}) => {
-            createBasicProfile(values).then( res => { // 没有错误的响应：res是响应体中的数据
+            if (uid) {
+              values._id = uid
+            }
+            createOrUpdateBasicProfile(values).then( res => { // 没有错误的响应：res是响应体中的数据
               setSubmitting(false)
-              alert("Successfully created!")
-              resetForm()
+              if (uid) {
+                alert("Successfully updated!")
+              } else {
+                alert("Successfully created!")
+              }
+              setUid(res.profile._id)
             }).catch(err => { // 有错误的响应：err一个字典 {success: false, message: 错误原因}
               setSubmitting(false)
               if (err && err.message) {
                 alert(err.message)
               } else {
-                alert("Creation failed.")
+                if (uid) {
+                  alert("Update failed.")
+                } else {
+                  alert("Creation failed.")
+                }
               }
             })
           }}
@@ -266,7 +283,7 @@ export default function ProfileBasic() {
                   disabled={isSubmitting}
                   onClick={submitForm}
                 >
-                  Submit
+                  {uid ? "UPDATE" : "SUBMIT"}
                 </Button>
                 <Button
                   variant="contained"

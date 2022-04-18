@@ -1,6 +1,6 @@
 import { getSession } from "next-auth/react"
 import { errMessages } from "../../../constants"
-
+import { getBasicProfileUsingEmail, createBasicProfile, updateBasicProfile } from "../../../model/userModel"
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -22,30 +22,29 @@ async function getHandler(req, res) {//get /profile params: id or email
       success: false,
       message: errMessages.MUST_SIGN_IN,
     })
+    return
   }
   const email = req.query.email
-  //TODO get basic profile where email = req.query.email
-  if (Math.random() >= 2) {//success, this user have created his/her basic profile
-    res.json({
-      success: true,
-      message: {
-        country: "CN",
-        email: email,
-        gender: "Male",
-        name: "Tianyi Zhang",
-        phone: "12345678",
-        school: "National University of Singapore",
-      }
-    })
-  } else if (Math.random() >= -1) {//this user haven't created his/her basic profile yet, but still response with 200
-    res.json({
+  //get basic profile where email = req.query.email
+  try{
+    const profile = await getBasicProfileUsingEmail(email)
+    if (profile != null) {//success, this user have created his/her basic profile
+      console.log(profile)
+      res.json({
+        success: true,
+        message: profile
+      })
+    } else {//this user haven't created his/her basic profile yet, but still response with 200
+      res.json({
+        success: false,
+        message: errMessages.NOTEXIST
+      })
+    }
+  } catch(e) {//server error
+    console.error("get /profile error:", e)
+    res.status(500).json({
       success: false,
-      message: errMessages.NOTEXIST
-    })
-  } else {//other error TODO: if err, return the error reason
-    res.json({
-      success: false,
-      message: "this is an error reason"
+      message: errMessages.SERVERERROR
     })
   }
 }
@@ -57,18 +56,24 @@ async function postHandler(req, res) {//post /profile
       success: false,
       message: errMessages.MUST_SIGN_IN,
     })
+    return
   }
-
-  //TODO: create a basic profile
-  if (Math.random() >= -1) {//mock success
-    res.json({//TODO: return the project obj
+  try {
+    let profile = req.body.profile
+    if (profile._id) {
+      profile = await updateBasicProfile(profile)
+    } else {
+      profile = await createBasicProfile(profile)
+    }
+    res.json({//success, response the created/updated profile
       success: true,
-      message: { profile: {_id: 1, ...req.body.profile} },
+      message: { profile: profile },
     })
-  } else {//mock fail
-    res.status(400).json({//TODO: if err, return the error reason
+  } catch(e) {//server error
+    console.error("post /profile error:", e)
+    res.status(500).json({
       success: false,
-      message: "this is an error reason",
+      message: errMessages.SERVERERROR,
     })
   }
 }
