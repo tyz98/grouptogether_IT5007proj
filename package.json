@@ -17,6 +17,7 @@
     "axios": "^0.26.1",
     "formik": "^2.2.9",
     "formik-mui": "^4.0.0-alpha.3",
+    "mongodb": "^4.5.0",
     "next": "12.1.0",
     "next-auth": "^4.2.1",
     "react": "17.0.2",
