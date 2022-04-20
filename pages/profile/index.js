@@ -117,15 +117,15 @@ export default function ProfileBasic() {
             if (uid) {
               values._id = uid
             }
-            createOrUpdateBasicProfile(values).then( res => { // 没有错误的响应：res是响应体中的数据
+            createOrUpdateBasicProfile(values).then( res => { // success response：data in response body
               setSubmitting(false)
               if (uid) {
                 alert("Successfully updated!")
               } else {
                 alert("Successfully created!")
               }
-              setUid(res.profile._id)
-            }).catch(err => { // 有错误的响应：err一个字典 {success: false, message: 错误原因}
+              setUid(res.profileId)
+            }).catch(err => { // error response：{success: false, message: error reason}
               setSubmitting(false)
               if (err && err.message) {
                 alert(err.message)

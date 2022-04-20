@@ -1,7 +1,7 @@
 import { Card, CardActions, CardContent, Button, Typography, Grid } from '@mui/material';
 import Link from 'next/link'
 
-export default function ProjectCard({_id, school, code, semester, projectName, studentCount}) {
+export default function ProjectCard({_id, school, code, semester, projectName, userCount}) {
   return (
     <Card sx={{ height: 240, overflow: "auto" }}>
       <Grid container direction="column" justifyContent="space-between" sx = {{ height: "100%" }}>
@@ -26,7 +26,7 @@ export default function ProjectCard({_id, school, code, semester, projectName, s
               {projectName}
             </Typography>
             <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>
-              {studentCount} students are looking for teammates
+              {userCount} students are looking for teammates
             </Typography>
           </CardContent>
         </Grid>

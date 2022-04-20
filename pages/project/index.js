@@ -3,12 +3,13 @@ import ProjectCard from "../../components/ProjectCard"
 import { projectsGetResponse } from "../../utils/ssrUtils"
 
 export default function ProjectList({ projects }) {
+  projects = JSON.parse(projects)
   return (
     <Grid container spacing={3}>
       {
         projects.map(project => (
           <Grid item xs={12} sm={12} md={6} lg={4} xl={3} key={project._id}>
-            <ProjectCard _id={project._id} school={project.school} code={project.code} semester={project.semester} projectName={project.projectName} studentCount={project.studentCount}/>
+            <ProjectCard _id={project._id} school={project.school} code={project.code} semester={project.semester} projectName={project.projectName} userCount={project.userCount || 0}/>
           </Grid>
         ))
       }
@@ -21,7 +22,7 @@ export async function getServerSideProps(context) {
   if (responsedata && responsedata.success) {
     return {
       props: {
-        projects: responsedata.message
+        projects: JSON.stringify(responsedata.message) //have to jsonify manually
       }, // will be passed to the page component as props
     }
   } else {//TODO: error page

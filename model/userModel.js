@@ -22,17 +22,18 @@ const createBasicProfile = async (profile) => {
   const db = client.db("grouptogether")
   const users = await db.collection("users")
   const result = await users.insertOne(profile)
-  const insertedProfile = await users.findOne({_id: result.insertedId}, {
-    projection: {
-      country: 1,
-      email: 1,
-      gender: 1,
-      name: 1,
-      phone: 1,
-      school: 1,
-    }})
-  //console.log("inserted profile=", insertedProfile)
-  return insertedProfile
+  return result.insertedId
+  // const insertedProfile = await users.findOne({_id: result.insertedId}, {
+  //   projection: {
+  //     country: 1,
+  //     email: 1,
+  //     gender: 1,
+  //     name: 1,
+  //     phone: 1,
+  //     school: 1,
+  //   }})
+  // //console.log("inserted profile=", insertedProfile)
+  // return insertedProfile
 }
 
 const updateBasicProfile = async (profile) => {
@@ -46,17 +47,18 @@ const updateBasicProfile = async (profile) => {
   };
   const result = await users.updateOne(filter, updateDoc)
   //console.log("result=", result)
-  const updatedProfile = await users.findOne({_id: profile._id}, {
-    projection: {
-      country: 1,
-      email: 1,
-      gender: 1,
-      name: 1,
-      phone: 1,
-      school: 1,
-    }})
-  //console.log("updated profile=", updatedProfile)
-  return updatedProfile
+  return profile._id
+  // const updatedProfile = await users.findOne({_id: profile._id}, {
+  //   projection: {
+  //     country: 1,
+  //     email: 1,
+  //     gender: 1,
+  //     name: 1,
+  //     phone: 1,
+  //     school: 1,
+  //   }})
+  // //console.log("updated profile=", updatedProfile)
+  // return updatedProfile
 }
 
 export { getBasicProfileUsingEmail, createBasicProfile, updateBasicProfile }

@@ -60,14 +60,15 @@ async function postHandler(req, res) {//post /profile
   }
   try {
     let profile = req.body.profile
+    let profileId
     if (profile._id) {
-      profile = await updateBasicProfile(profile)
+      profileId = await updateBasicProfile(profile)
     } else {
-      profile = await createBasicProfile(profile)
+      profileId = await createBasicProfile(profile)
     }
     res.json({//success, response the created/updated profile
       success: true,
-      message: { profile: profile },
+      message: { profileId: profileId },
     })
   } catch(e) {//server error
     console.error("post /profile error:", e)

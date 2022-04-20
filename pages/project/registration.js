@@ -172,7 +172,18 @@ export default function ProjectRegistration() {
             setSubmitting(false)
             return
           }
-          createProject({...values, questions}).then(_ => {
+          const questionsObj = {}
+          questions.filter(question => !question.deleted).forEach((question) => {
+            const optionsObj = {}
+            question.options.filter(option => !option.deleted).forEach((option) => {
+              optionsObj[option.idx] = option.desc
+            })
+            questionsObj[question.idx] = {
+              desc: question.desc,
+              options: optionsObj
+            }
+          })
+          createProject({...values, questions: questionsObj}).then(_ => {
             setSubmitting(false)
             alert("Successfully created!")
             resetForm()

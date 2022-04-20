@@ -1,5 +1,7 @@
 import { getSession } from "next-auth/react"
+import { errMessages } from "../../../constants"
 import { projectsGetResponse } from "../../../utils/ssrUtils"
+import { createProject } from "../../../model/projectModel"
 
 //TODO
 export default async function handler(req, res) {
@@ -28,15 +30,20 @@ async function postHandler(req, res) {//post /project
   const session = await getSession({ req })
   //TODO: create a project databse
   if (session) {
-    if (Math.random() >= -1) {//mock success
-      res.json({//TODO: return the project obj
+    //console.log(req.body.project.questions['0'].options)
+    try {
+      let project = req.body.project
+      project.userCount = 0
+      const projectId = await createProject(project)
+      res.json({//success, response the created project
         success: true,
-        message: { project: {_id: 1, ...req.body.project} },
+        message: { projectId },
       })
-    } else {//mock fail
-      res.status(400).json({//TODO: if err, return the error reason
+    } catch(e) {//server error
+      console.error("post /project error:", e)
+      res.status(500).json({
         success: false,
-        message: "this is an error reason",
+        message: errMessages.SERVERERROR,
       })
     }
   } else {
