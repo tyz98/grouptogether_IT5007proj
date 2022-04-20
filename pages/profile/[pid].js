@@ -26,8 +26,12 @@ export default function ProfileProject(props) {
     }
 
     getProjectQuestions(pid).then(res => { // res is exactly the data in response body
-      console.log("getProjectQuestions res=", res)
-      setQuestions(res.questions)
+      const questionsArray = []
+      for (let qid in res.questions) {
+        questionsArray.push({_id: qid, ...res.questions[qid]})
+      }
+      console.log(questionsArray)
+      setQuestions(questionsArray)
       setPageError(false)
     }).catch(err => { // err is {success: false, message: "error reason"}
       if (err && err.message) {

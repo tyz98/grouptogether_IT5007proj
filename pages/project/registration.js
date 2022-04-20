@@ -174,13 +174,9 @@ export default function ProjectRegistration() {
           }
           const questionsObj = {}
           questions.filter(question => !question.deleted).forEach((question) => {
-            const optionsObj = {}
-            question.options.filter(option => !option.deleted).forEach((option) => {
-              optionsObj[option.idx] = option.desc
-            })
             questionsObj[question.idx] = {
               desc: question.desc,
-              options: optionsObj
+              options: question.options.filter(option => !option.deleted).map(option => option.desc)
             }
           })
           createProject({...values, questions: questionsObj}).then(_ => {

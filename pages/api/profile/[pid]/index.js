@@ -1,5 +1,8 @@
 import { errMessages } from "../../../../constants"
 import { getSession } from "next-auth/react"
+import { getUserIdUsingEmail } from "../../../../model/userModel"
+import { createOrUpdateAnswer } from "../../../../model/answerModel"
+import { ObjectId } from "mongodb"
 
 export default async function handler(req, res) {//only support post. we don't support user get himself project-specific profile for now
   if (req.method === 'POST') {
@@ -21,17 +24,22 @@ async function postHandler(req, res) {//post /project/[pid]
       message: errMessages.MUST_SIGN_IN,
     })
   }
-
-  //TODO: create an answer object in db
-  if (Math.random() >= -1) {//mock success
-    res.json({//TODO: return the profile obj
+  //create an answer object in db
+  try {
+    const uid = await getUserIdUsingEmail(session.user.email)
+    const answer = req.body
+    answer.uid = uid
+    answer.pid = ObjectId(answer.pid)
+    const answerId = await createOrUpdateAnswer(answer)
+    res.json({//return the answer id
       success: true,
-      message: { profile: {_id: 1, userEmail: session.user.email, ...req.body} },
+      message: { answerId },
     })
-  } else {//mock fail
-    res.status(400).json({//TODO: if err, return the error reason
+  } catch (e) {
+    console.error("post /profile/pid error:", e)
+    res.status(500).json({
       success: false,
-      message: "this is an error reason",
+      message: errMessages.SERVERERROR
     })
   }
 }
