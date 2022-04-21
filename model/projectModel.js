@@ -37,6 +37,15 @@ const getProjectQuestions = async (pid) => {
   return project
 }
 
+const getProjectById = async (pid) => {
+  const client = await clientPromise
+  const db = client.db("grouptogether")
+  const project = await db
+    .collection("projects")
+    .findOne({_id: pid})
+  return project
+}
+
 const updateUserCount =  async (pid, delta) => {
   const client = await clientPromise
   const db = client.db("grouptogether")
@@ -48,4 +57,4 @@ const updateUserCount =  async (pid, delta) => {
   return prevUserCount + delta
 }
 
-export { createProject, getAllProjectBasicInfo, getProjectQuestions, updateUserCount }
+export { createProject, getAllProjectBasicInfo, getProjectQuestions, getProjectById, updateUserCount }

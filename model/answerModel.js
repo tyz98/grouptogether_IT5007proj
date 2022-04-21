@@ -18,4 +18,12 @@ const createOrUpdateAnswer = async (answer) => {
   }
 }
 
-export { createOrUpdateAnswer }
+const getUidsForProject = async (pid) => {
+  const client = await clientPromise
+  const db = client.db("grouptogether")
+  const answers = await db.collection("answers")
+  const uids = (await answers.find({pid: pid}, {projection: {_id: 0, uid: 1}})).toArray()
+  return uids
+}
+
+export { createOrUpdateAnswer, getUidsForProject }

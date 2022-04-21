@@ -1,4 +1,9 @@
-import { getAllProjectBasicInfo } from "../model/projectModel"
+import { getAllProjectBasicInfo, getProjectById } from "../model/projectModel"
+import { getUserInfosForIds } from "../model/userModel"
+import { getUidsForProject } from "../model/answerModel"
+import { ObjectId } from "mongodb"
+import { errMessages } from "../constants"
+
 export async function projectsGetResponse() {
   try {
     const projects = await getAllProjectBasicInfo()
@@ -19,103 +24,38 @@ export async function projectsGetResponse() {
     return {//TODO: if err, return the error reason
       success: false,
       status: 500,
-      message: "Server error"
+      message: errMessages.SERVERERROR,
     }
   }
 }
 
 export async function singleProjectGetResponse(pid) {
-  if (Math.random() >= -1) {//mock success
-    return {//TODO: return the project detail obj
+  try {
+    pid = ObjectId(pid)
+    const proj = await getProjectById(pid)
+    console.log("proj=", proj)
+    if (proj == null) {
+      return {
+        success: false,
+        status: 404,
+        message: "not found",
+      }
+    }
+    const userids = (await getUidsForProject(pid)).map(u => u.uid)
+    const userInfos = await getUserInfosForIds(userids)
+    return {// return the project's all registered users
       success: true,
       message: {
-        _id: 1, 
-        school: "National University of Singapore",
-        code: "IT5007",
-        semester: "AY2021/2022 2",
-        projectName: "Final Project",
-        userCount: 10,
-        teammates: [
-          {
-            _id: 1,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Zhang Tianyi",
-              gender: "F",
-              nationality: "Chinese",
-              email: "tianyi.zhang@u.nus.edu",
-              phone: "87654321"
-            }
-          },
-          {
-            _id: 2,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Yan Zehong",
-              gender: "M",
-              nationality: "Singaporean",
-              email: "abc@gmail.com",
-              phone: "12345678"
-            }
-          },
-          {
-            _id: 3,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Zhang Tianyi",
-              gender: "F",
-              nationality: "Chinese",
-              email: "tianyi.zhang@u.nus.edu",
-              phone: "87654321"
-            }
-          },
-          {
-            _id: 4,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Yan Zehong",
-              gender: "M",
-              nationality: "Singaporean",
-              email: "abc@gmail.com",
-              phone: "12345678"
-            }
-          },
-          {
-            _id: 5,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Zhang Tianyi",
-              gender: "F",
-              nationality: "Chinese",
-              email: "tianyi.zhang@u.nus.edu",
-              phone: "87654321"
-            }
-          },
-          {
-            _id: 6,
-            basicProfile: {
-              school: "National University of Singapore",
-              name: "Yan Zehong",
-              gender: "M",
-              nationality: "Singaporean",
-              email: "abc@gmail.com",
-              phone: "12345678"
-            }
-          }
-        ]
-      },
+        _id: pid,
+        teammates: userInfos,
+      }
     }
-  } else if (Math.random() >= -1) {//mock 404 fail
-    return {//TODO: if err, return the error reason
-      success: false,
-      status: 404,
-      message: "not found",
-    }
-  } else {//mock other fail
+  } catch (e) {
+    console.error(e)
     return {
       success: false,
-      status: 400,
-      message: "error reason",
+      status: 500,
+      message: errMessages.SERVERERROR,
     }
   }
 }

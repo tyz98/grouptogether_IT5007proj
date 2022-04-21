@@ -72,4 +72,23 @@ const updateBasicProfile = async (profile) => {
   // return updatedProfile
 }
 
-export { getBasicProfileUsingEmail, createBasicProfile, updateBasicProfile, getUserIdUsingEmail }
+const getUserInfosForIds = async (uids) => {
+  const client = await clientPromise
+  const db = client.db("grouptogether")
+  const userinfos = await db
+    .collection("users")
+    .find({_id: { $in: uids}}, {projection:{
+      _id: 1,
+      country: 1,
+      email: 1,
+      gender: 1,
+      name: 1,
+      phone: 1,
+      school: 1,
+    }})
+    .toArray()
+  console.log("userinfos", userinfos)
+  return userinfos
+}
+
+export { getBasicProfileUsingEmail, createBasicProfile, updateBasicProfile, getUserIdUsingEmail, getUserInfosForIds }

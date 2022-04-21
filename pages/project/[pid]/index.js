@@ -16,16 +16,16 @@ export default function ProjectTeammates({pid, project}) {
         <AccessDenied />
     )
   }
+  project = JSON.parse(project)
 
   return (
     <>
       <Grid container spacing={3}>
         {
           project.teammates.map(t => {
-            const basicProfile = t.basicProfile
             return (
             <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={t._id}>
-              <TeammateCard pid={project._id} uid={t._id} school={basicProfile.school} name={basicProfile.name} gender={basicProfile.gender} nationality={basicProfile.nationality} email={basicProfile.email} phone={basicProfile.phone} />
+              <TeammateCard pid={project._id} uid={t._id} school={t.school} name={t.name} gender={t.gender} nationality={t.country} email={t.email} phone={t.phone} />
             </Grid>
           )})
         }
@@ -47,7 +47,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         pid: context.params.pid,
-        project: responsedata.message
+        project: JSON.stringify(responsedata.message)
       }, // will be passed to the page component as props
     }
   } else if (responsedata && responsedata.status === 404) {
