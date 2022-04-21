@@ -17,6 +17,22 @@ const getBasicProfileUsingEmail = async (email) => {
   return profile
 };
 
+const getBasicProfileById = async (uid) => {
+  const client = await clientPromise
+  const db = client.db("grouptogether")
+  const profile = await db
+    .collection("users")
+    .findOne({_id: uid}, {projection: {
+      country: 1,
+      email: 1,
+      gender: 1,
+      name: 1,
+      phone: 1,
+      school: 1,
+    }})
+  return profile
+};
+
 const getUserIdUsingEmail = async (email) => {
   const client = await clientPromise
   const db = client.db("grouptogether")
@@ -91,4 +107,11 @@ const getUserInfosForIds = async (uids) => {
   return userinfos
 }
 
-export { getBasicProfileUsingEmail, createBasicProfile, updateBasicProfile, getUserIdUsingEmail, getUserInfosForIds }
+export { 
+  getBasicProfileUsingEmail,
+  getBasicProfileById,
+  createBasicProfile,
+  updateBasicProfile, 
+  getUserIdUsingEmail, 
+  getUserInfosForIds 
+}

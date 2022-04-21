@@ -3,10 +3,11 @@ import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router'
 import AccessDenied from "../../../components/AccessDenied"
 import ReloadPrompt from "../../../components/ReloadPrompt"
+import NotFound from "../../../components/NotFound"
 import { getProjectProfile } from "../../../actions/profile"
 import { Card, CardContent, Typography, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import TeammateCard from "../../../components/TeammateCard"
-
+import { errMessages } from "../../../constants"
 
 export default function ProjectProfileShow(props) {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function ProjectProfileShow(props) {
   const [questions, setQuestions] = useState([])
   const [basicProfile, setBasicProfile] = useState({})
   const [pageError, setPageError] = useState(false)
+  const [pageErrorMessage, setPageErrorMessage] = useState("")
 
   useEffect(() => {
     if (!session) {
@@ -29,10 +31,11 @@ export default function ProjectProfileShow(props) {
       setPageError(false)
     }).catch(err => { // err is {success: false, message: "error reason"}
       if (err && err.message) {
-        alert(err.message)
         setPageError(true)
+        setPageErrorMessage(err.message)
       } else {
         setPageError(true)
+        setPageErrorMessage("")
       }
     })
   }, [session, pid, uid])
@@ -46,20 +49,26 @@ export default function ProjectProfileShow(props) {
   }
 
   if (pageError) {
-    return (
-      <ReloadPrompt />
-    )
+    if (pageErrorMessage === errMessages.NOTEXIST) {
+      return (
+        <NotFound />
+      )
+    } else {
+      return (
+        <ReloadPrompt />
+      )
+    }
   }
 
   return (
     <>
-    <Grid item xs={12} sm={12} md={6} lg={6} xl={4} sx={{marginBottom: 3}}>
-      <TeammateCard forShow={true} pid={pid} uid={uid} school={basicProfile.school} name={basicProfile.name} gender={basicProfile.gender} nationality={basicProfile.nationality} email={basicProfile.email} phone={basicProfile.phone}/>
+    <Grid item xs={12} sm={6} md={4} lg={3} xl={3} sx={{marginBottom: 3}}>
+      <TeammateCard forShow={true} pid={pid} uid={uid} school={basicProfile.school} name={basicProfile.name} gender={basicProfile.gender} nationality={basicProfile.country} email={basicProfile.email} phone={basicProfile.phone}/>
     </Grid>
     <Grid container spacing={3}>
       {
         questions.map((question) => (
-          <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={question._id}>
+          <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={question.qid}>
             <Card sx={{ height: 300, overflow: "auto" }}>
                 <CardContent>
                   <Typography variant="h6" component="div" gutterBottom>

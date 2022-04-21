@@ -1,5 +1,10 @@
 import { errMessages } from "../../../../constants"
 import { getSession } from "next-auth/react"
+import { getBasicProfileById } from "../../../../model/userModel"
+import { getProjectQuestions } from "../../../../model/projectModel"
+import { getAnswerByPIdUId } from "../../../../model/answerModel"
+import { ObjectId } from "mongodb"
+import { BSONTypeError } from "bson"
 
 export default async function handler(req, res) {//only support get.
   if (req.method === 'GET') {
@@ -14,44 +19,49 @@ export default async function handler(req, res) {//only support get.
 
 //get user uid's of project pid - specific profile (TODO: not sure if add basicProfile)
 async function getHandler(req, res) {//get /profile/[pid]/[uid]
-  const { pid, uid } = req.query
-  if (Math.random() > -1) {
+  try {
+    const { pid, uid } = req.query
+    const basicProfile = await getBasicProfileById(ObjectId(uid))
+    const questions = await getProjectQuestions(ObjectId(pid))
+    const answer = await getAnswerByPIdUId(ObjectId(pid), ObjectId(uid))
+    if (!basicProfile|| !questions || !questions.questions || !answer) {
+      res.status(404).json(
+        {
+          sucess: false,
+          message: errMessages.NOTEXIST
+        }
+      )
+      return
+    }
+    const projectProfile = []
+    for (let qid in questions.questions) {
+      const question = questions.questions[qid]
+      projectProfile.push({qid, ...question, chosenIdx: answer[qid]})
+    }
     res.json({
       success: true,
       message: {
         pid: pid, //project id
         uid: uid, //user id
-        basicProfile: {
-          school: "National University of Singapore",
-          name: "Zhang Tianyi",
-          gender: "F",
-          nationality: "Chinese",
-          email: "tianyi.zhang@u.nus.edu",
-          phone: "87654321"
-        },
-        projectProfile: [
-          { _id: 111, desc:"frontend", options:["vue", "react", "angular", "svelte"], chosenIdx: [0, 1, 3] },
-          { _id: 222, desc:"backend", options:["java", "python", "golang", "nodejs"], chosenIdx: [] },
-          { _id: 333, desc:"design experience", options:["familiar", "know", "never"], chosenIdx: [1] },
-          { _id: 444, 
-            desc:"long desc long desc long desc long desc long desc long desc long desc",
-            options:["many option1", "many option2", "many option3", "many option4", "many option5", "many option6", "many option7", "many option8", "many option9"],
-            chosenIdx: [1,7]
-          }
-      ]}
-    })
-  } else if (Math.random() > 0.5) {//no such project 404
-    res.status(404).json(
-      {
-        sucess: false,
-        message: errMessages.NOTEXIST
+        basicProfile,
+        projectProfile
       }
-    )
-  } else {
-    res.status(400).json(//other error reason
+    })
+  } catch (e) {
+    if (e instanceof BSONTypeError) {
+      res.status(404).json(
+        {
+          sucess: false,
+          message: errMessages.NOTEXIST
+        }
+      )
+      return
+    }
+    console.error("get /profile/[pid]/[uid] error",e)
+    res.status(400).json(//server error
       {
         sucess: false,
-        message: "this is an error reason"
+        message: errMessages.SERVERERROR
       }
     )
   }

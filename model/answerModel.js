@@ -7,7 +7,6 @@ const createOrUpdateAnswer = async (answer) => {
   const answers = await db.collection("answers")
   //const filter = { pid: answer.pid, uid: answer.uid };
   const prevanswer = await answers.findOne( { pid: answer.pid, uid: answer.uid })
-  console.log("prevanswer=", prevanswer)
   if (prevanswer == null) {
     const result = await answers.insertOne(answer)
     await updateUserCount(answer.pid, 1)
@@ -26,4 +25,15 @@ const getUidsForProject = async (pid) => {
   return uids
 }
 
-export { createOrUpdateAnswer, getUidsForProject }
+const getAnswerByPIdUId = async (pid, uid) => {
+  const client = await clientPromise
+  const db = client.db("grouptogether")
+  const answer = await db.collection("answers").findOne({pid, uid}, {projection: {answer: 1}})
+  if (answer && answer.answer) {
+    return answer.answer
+  } else {
+    return null
+  }
+}
+
+export { createOrUpdateAnswer, getUidsForProject, getAnswerByPIdUId }
