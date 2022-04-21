@@ -25,7 +25,6 @@ export default function ProjectProfileShow(props) {
     }
 
     getProjectProfile(pid, uid).then(res => { // res is exactly the data in response body
-      console.log("getProjectProfile res=", res)
       setBasicProfile(res.basicProfile)
       setQuestions(res.projectProfile)
       setPageError(false)

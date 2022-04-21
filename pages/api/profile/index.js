@@ -29,7 +29,6 @@ async function getHandler(req, res) {//get /profile params: email
   try{
     const profile = await getBasicProfileUsingEmail(email)
     if (profile != null) {//success, this user have created his/her basic profile
-      console.log(profile)
       res.json({
         success: true,
         message: profile

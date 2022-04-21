@@ -7,7 +7,6 @@ import { errMessages } from "../constants"
 export async function projectsGetResponse() {
   try {
     const projects = await getAllProjectBasicInfo()
-    console.log("projects=",projects)
     if (projects != null) {//success, this user have created his/her basic profile
       return {
         success: true,
@@ -33,7 +32,6 @@ export async function singleProjectGetResponse(pid) {
   try {
     pid = ObjectId(pid)
     const proj = await getProjectById(pid)
-    console.log("proj=", proj)
     if (proj == null) {
       return {
         success: false,

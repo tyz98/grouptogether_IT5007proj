@@ -28,12 +28,9 @@ export default function ProfileBasic() {
       return
     }
     getBasicProfile({email: session.user.email}).then(res => { // res is exactly the data in response body
-      console.log("res=", res)
-      console.log("formikRef", formikRef)
       for (let field in res) {
         if (field === "_id") {
           setUid(res[field])
-          console.log(res[field])
         } else {
           formikRef.current.setFieldValue(field, res[field])
         }

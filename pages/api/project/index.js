@@ -3,7 +3,6 @@ import { errMessages } from "../../../constants"
 import { projectsGetResponse } from "../../../utils/ssrUtils"
 import { createProject } from "../../../model/projectModel"
 
-//TODO
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     await postHandler(req, res)
@@ -28,9 +27,8 @@ async function getHandler(req, res) {//get /project
 
 async function postHandler(req, res) {//post /project
   const session = await getSession({ req })
-  //TODO: create a project databse
+  //create a project databse
   if (session) {
-    //console.log(req.body.project.questions['0'].options)
     try {
       let project = req.body.project
       project.userCount = 0

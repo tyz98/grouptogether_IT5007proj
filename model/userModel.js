@@ -73,7 +73,6 @@ const updateBasicProfile = async (profile) => {
     $set: profile,
   };
   const result = await users.updateOne(filter, updateDoc)
-  //console.log("result=", result)
   return profile._id
   // const updatedProfile = await users.findOne({_id: profile._id}, {
   //   projection: {
@@ -103,7 +102,6 @@ const getUserInfosForIds = async (uids) => {
       school: 1,
     }})
     .toArray()
-  console.log("userinfos", userinfos)
   return userinfos
 }
 

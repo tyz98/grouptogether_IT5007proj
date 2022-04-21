@@ -43,7 +43,6 @@ export default function ProfileProject(props) {
       for (let qid in res.questions) {
         questionsArray.push({_id: qid, ...res.questions[qid]})
       }
-      console.log(questionsArray)
       setQuestions(questionsArray)
       setPageError(false)
     }).catch(err => { // err is {success: false, message: "error reason"}
@@ -98,9 +97,7 @@ export default function ProfileProject(props) {
         answer[qid] = chosedIdx
       }
     }
-    console.log("postData=", {pid, answer})
     postProjectProfile({pid, answer}).then(res => {
-      console.log("postProjectProfile res=", res)
       setSubmitting(false)
       alert("Successfully submitted!")
     }).catch(err => {
