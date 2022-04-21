@@ -3,10 +3,12 @@ import { useSession } from "next-auth/react"
 import { useRouter } from 'next/router'
 import AnswerList from "../../components/AnswerList"
 import AccessDenied from "../../components/AccessDenied"
+import BasicProfileUncompletedPromt from "../../components/BasicProfileUncompletedPromt"
 import { Card, CardContent, Button, Typography, Grid, LinearProgress, FormGroup, FormControlLabel, Box, Checkbox } from '@mui/material';
 import ReloadPrompt from "../../components/ReloadPrompt"
 import { getProjectQuestions } from "../../actions/project"
-import { postProjectProfile } from "../../actions/profile"
+import { postProjectProfile, getBasicProfile } from "../../actions/profile"
+import { errMessages } from "../../constants"
 
 
 export default function ProfileProject(props) {
@@ -19,12 +21,23 @@ export default function ProfileProject(props) {
   const [questionsChecked, setQuestionsChecked] = useState({}) //{1: [false, true, true], 2: [false, false, true]} {qid: [options]}
   const [pageError, setPageError] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [basicProfileUncompleted, setBasicProfileUncompleted] = useState(false)
 
   useEffect(() => {
     if (!session) {
       return;
     }
-
+    let noBasic = false
+    getBasicProfile({email: session.user.email}).then(res => { // res is exactly the data in response body
+    }).catch(err => { // err is {success: false, message: "error reason"}
+      if (err && err.message == errMessages.NOTEXIST) {
+        setBasicProfileUncompleted(true)
+        noBasic = true
+      }
+    })
+    if (noBasic) {
+      return
+    }
     getProjectQuestions(pid).then(res => { // res is exactly the data in response body
       const questionsArray = []
       for (let qid in res.questions) {
@@ -43,14 +56,18 @@ export default function ProfileProject(props) {
     })
   }, [session, pid])
 
-
-
   if (typeof window !== "undefined" && loading) return null
 
   // If no session exists, display access denied message
   if (!session) {
     return (
         <AccessDenied />
+    )
+  }
+
+  if (basicProfileUncompleted) {
+    return (
+      <BasicProfileUncompletedPromt />
     )
   }
 
