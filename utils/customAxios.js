@@ -1,11 +1,11 @@
 import axios from 'axios'
 
-let baseURL = process.env.DEV_API_URL
-// if( process.env.NODE_ENV === 'production' ) {
-//     baseURL = ''
-// } else {
-//     baseURL = process.env.DEV_API_URL
-// }
+let baseURL
+if( process.env.NODE_ENV === 'production' ) {
+    baseURL = process.env.PROD_API_URL
+} else {
+    baseURL = process.env.DEV_API_URL
+}
 const instance = axios.create({
   baseURL,
 });
