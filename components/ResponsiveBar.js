@@ -83,7 +83,7 @@ export default function ResponsiveBar(props) {
                 <MenuItem key={page.title} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
                     <Link href={page.href}>
-                      <a>{page.title}</a>
+                      {page.title}
                     </Link>
                   </Typography>
                 </MenuItem>
@@ -115,16 +115,11 @@ export default function ResponsiveBar(props) {
           <Box sx={{ flexGrow: 0 }}>
           {!session && (
              <MenuItem>
-              <Typography textAlign="center">
-                <a
-                  href={`/api/auth/signin`}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    signIn()
-                  }}
-                >
+              <Typography textAlign="center"
+                onClick={() => {
+                  signIn()
+                }}>
                   Sign in
-                </a>
               </Typography>
             </MenuItem>
           )}
@@ -160,17 +155,11 @@ export default function ResponsiveBar(props) {
                 </MenuItem>
               ))}
               <MenuItem key="logout">
-                <Typography textAlign="center">
-                  <a
-                    href={`/api/auth/signout`}
-                    onClick={(e) => {
-                      e.preventDefault()
+                <Typography textAlign="center" 
+                  onClick={() => {
                       signOut()
-
-                    }}
-                  >
+                  }}>
                     Sign out
-                  </a>
                 </Typography>
               </MenuItem>
             </Menu>

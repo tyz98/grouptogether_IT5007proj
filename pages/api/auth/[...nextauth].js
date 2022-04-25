@@ -52,6 +52,7 @@ export default NextAuth({
     //   issuer: process.env.AUTH0_ISSUER,
     // }),
   ],
+  secret: process.env.NEXT_PUBLIC_SECRET,
   theme: {
     colorScheme: "light",
   },

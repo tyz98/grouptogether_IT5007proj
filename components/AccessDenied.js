@@ -8,16 +8,11 @@ export default function AccessDenied() {
       <h1>Access Denied</h1>
       <p>
         You must 
-        <Button>
-          <a
-            href="/api/auth/signin"
-            onClick={(e) => {
-              e.preventDefault()
+        <Button 
+          onClick={() => {
               signIn()
-            }}
-          >
+          }}>
             Sign in
-          </a>
         </Button>
         to view this page
       </p>

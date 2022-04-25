@@ -1,4 +1,4 @@
-import { singleProjectGetResponse } from "../../../utils/ssrUtils"
+import { singleProjectGetResponse } from "../../../../utils/ssrUtils"
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
